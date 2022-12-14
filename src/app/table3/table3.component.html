@@ -1,0 +1,48 @@
+<!-- <p>table3 works!</p> -->
+<p-toast></p-toast>
+<p-table dataKey="id" [columns]="cols" [value]="tableArray" editMode="row" [tableStyle]="{'min-width': '70rem'}"  [paginator]="true" [rows]="rowCount" [showCurrentPageReport]="true"
+currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [rowsPerPageOptions]="[5,10,15,20]" [lazy]="true" (onLazyLoad)="paginationLoad($event)" [totalRecords]="DataLength" >
+<ng-template pTemplate="caption" *ngFor="let col of cols">
+    <form [formGroup]="tableform" (ngSubmit)="multi(tableform.value)">
+    <p-multiSelect [options]="selectedColumns"  optionLabel="header" formControlName="colToggle"
+            selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}" placeholder="Choose Columns"></p-multiSelect>
+            <button pButton type="submit" label="Submit"></button>
+        </form>
+</ng-template>
+    <ng-template pTemplate="header" let-columns class="header">
+        <tr>
+            <!-- <th [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.sort" *ngFor="let col of columns"> -->
+                <th *ngFor="let col of columns">
+                <p>{{col.header}}</p>
+                <!-- <p-sortIcon *ngIf="col.sort" [field]="col.field"></p-sortIcon>  -->
+                    <button *ngIf="col.field=='name'" pButton type="button" value="sort" icon="pi-sort" (click)="sortName(col.field)" class="set-button">Sort</button>
+                <!-- <p-columnFilter type="text" *ngIf="col.filter=='text'" field="{{col.field}}" display="menu"></p-columnFilter>
+                <p-columnFilter type="numeric" *ngIf="col.filter=='numeric'" field="quantity" display="menu"></p-columnFilter> -->
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-tables let-columns="columns" let-editing="editing" let-ri="rowIndex">
+        <tr [pEditableRow]="tables">
+            <td pEditableColumn *ngFor="let col of columns">
+                <p-cellEditor *ngIf="col.field">
+                    <ng-template pTemplate="input" *ngIf="col.field !='action'">
+                        <input pInputText type="text" [(ngModel)]="tables[col.field]">
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                        {{tables[col.field]}}
+                    </ng-template>
+                </p-cellEditor>
+                <div *ngIf="col.field =='action'">
+                    <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(tables)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+                    <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(tables, ri)" class="p-button-rounded p-button-text p-button-danger" ></button> 
+                    <button *ngIf="!editing" pButton pRipple icon="pi pi-pencil" pInitEditableRow class="p-button-rounded p-button-success mr-2" (click)="editProduct(tables)" id="editButton"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteProduct(tables)"></button>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+
+</p-table>
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
+<!-- table3: {{tableArray | json}} -->
